@@ -1,25 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import List from './List';
+import Alert from "./Alert";
+
 
 function App() {
+  const [name, setName] = useState('');
+  const [list, setList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editID, setEditID] = useState(null);
+  const [alert, setAlert] = useState({ show: false, msg: '', type: '' });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name) {
+      // display alert
+      showAlert(true, 'danger', 'pls enter value')
+    }
+    else if (name && isEditing) {
+      // deal with edit
+    }
+    else {
+      // show alert
+      const newItem = {id: new Date().getTime().toString(), title: name};
+      setList([...list, newItem]);
+      setName('')
+    }
+  }
+
+  const showAlert = (show=false, type="", msg="") => {
+    setAlert({show, type, msg})
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  <section className="section-center">
+    <form className="grocery-form" onSubmit={handleSubmit}>
+      {alert.show && <Alert {...alert} />}
+      <h3>grocery bud</h3>
+      <div className="form-control">
+        <input 
+        type="text" 
+        className="grocery" 
+        placeholder="e.g. eggs" 
+        value={name}
+        onChange={(e) => setName(e.target.value)} />
+        <button type="text" className="submit-btn">
+          {isEditing ? 'edit' : 'submit'}
+        </button>
+      </div>
+    </form>
+    {list.length > 0 && (
+    <div className="grocery-container">
+      <List items={list} />
+      <button className="clear-btn">clear-items</button>
     </div>
-  );
+    )}
+  </section>
+  
+  )
+  
 }
 
 export default App;
